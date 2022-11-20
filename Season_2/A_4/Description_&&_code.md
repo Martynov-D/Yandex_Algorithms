@@ -1,0 +1,1 @@
+link <https://contest.yandex.ru/contest/28969/enter/>
