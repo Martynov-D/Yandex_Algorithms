@@ -233,10 +233,7 @@ def main():
 | 3<br>10 15 20 |  0  |
 
 ```python
-def main():
-    length = int(input())
-    results = list(map(int, input().split()))
-
+def o_nlogn(length, results):
     winner = results[0]
     answer = 0
 
@@ -251,6 +248,37 @@ def main():
     if answer:
         return results.index(answer) + 1
     return 0
+
+
+def o_n(length, results):
+    winner = results[0]
+    answer = 0
+
+    for i in range(1, length - 1):
+        if results[i] > winner:
+            winner = results[i]
+            answer = 0
+        elif results[i] % 10 == 5:
+            if results[i] > results[i + 1]:
+                answer = max(answer, results[i])
+    place = 0
+    if answer:
+        for paticipant in results:
+            if paticipant > answer:
+                place += 1
+        place += 1
+    return place
+
+
+if __name__ == '__main__':
+    with open('input.txt', 'r') as f:
+        length = int(f.readline())
+        results = list(map(int, f.readline().split()))
+
+        # works faster in yandex contest
+        print(o_nlogn(length, results))
+        
+        print(o_n(length, results))
 ```
 
 ## F
