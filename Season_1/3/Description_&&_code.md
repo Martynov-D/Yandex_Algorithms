@@ -1,4 +1,4 @@
-1 3 2<4 3 2 s://contest.yandex.ru/contest/27663/enter/>
+Link: <https://contest.yandex.ru/contest/27663/enter/>
 
 ## A
 

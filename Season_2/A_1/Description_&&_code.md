@@ -1,4 +1,4 @@
-link <https://contest.yandex.ru/contest/28724/enter/>
+Link: <https://contest.yandex.ru/contest/28724/enter/>
 
 ## A
 
@@ -32,7 +32,7 @@ link <https://contest.yandex.ru/contest/28724/enter/>
 | 35<br>14<br>11<br>-3 | NO  |
 
 ```python
-
+# TODO let me out
 ```
 
 ## B

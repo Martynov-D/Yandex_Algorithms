@@ -236,19 +236,34 @@ def foo():
 <b><i>Работает в случаях кроме исключений, как n2 > m и других.</b></i>
 
 ```python
+def solution1(k1, m, k2, p2, n2):
+    f = (k2 - 1) // ((p2 - 1) * m + n2) + 1
+    p1 = (k1 - 1) // f // m + 1
+    n1 = (k1 - 1) // f % m + 1
+
+    return p1, n1, f
+
+
+def solution2(k1, m, k2, p2, n2):
+    f = k2 // (m + n2 * (p2 - 1) - 1)
+    p1 = 1 + k1 // (f * m)
+    n1 = 1 + (k1 - f * m * (p1 - 1)) // f
+
+    return p1, n1, f
+
+
 def main():
     # all exceptions like n2 > m and others are not mentioned
-    k1, m, k2, p2, n2 = map(int, input().split())
+    print('f p n')
+    with open('input.txt', 'r') as f:
+        for line in f:
+            k1, m, k2, p2, n2, true_p, true_n = map(int, line.split())
 
-    flats_per_floor = k2 // (m * (p2 - 1) + (n2 - 1))
-    p1 = ((k1 - 1) // flats_per_floor) // m + 1
-    n1 = 1 + (k1 - 1) // flats_per_floor - m * (((k1 - 1) // flats_per_floor) // m)
+            print('-' * 10)
+            print(true_p, true_n)
+            print(*solution1(k1, m, k2, p2, n2))
+            print(*solution2(k1, m, k2, p2, n2))
 
-    print(p1, n1)
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ### F
@@ -301,11 +316,6 @@ def main():
         print(h1, w1 + w2)
     else:
         print(h1 + h2, w1)
-
-
-if __name__ == '__main__':
-    main()
-
 ```
 
 ### G
@@ -432,10 +442,6 @@ def main():
         print(-1)
     else:
         print(*result)
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ### I
@@ -484,11 +490,6 @@ def main():
         print('YES')
     else:
         print('NO')
-
-
-if __name__ == '__main__':
-    main()
-
 ```
 
 ### J
@@ -537,5 +538,5 @@ cx + dy = f</i>
 | 0<br>2<br>0<br>4<br>1<br>2 | 4 0.5 |
 
 ```python
-# TODO help me
+# TODO let me out
 ```

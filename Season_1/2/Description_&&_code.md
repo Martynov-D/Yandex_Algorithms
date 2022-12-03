@@ -33,10 +33,6 @@ def main():
         if numbers[i] <= numbers[i - 1]:
             return 'NO'
     return 'YES'
-
-
-if __name__ == '__main__':
-    print(main())
 ```
 
 ## B
@@ -99,10 +95,6 @@ def main():
         print('WEAKLY DESCENDING')
     else:
         print('RANDOM')
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ## C
@@ -146,10 +138,6 @@ def main():
             smallest_difference = temp
             ind = i
     print(numbers[ind])
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ## D
@@ -193,10 +181,6 @@ def main():
         else:
             i += 1
     print(count)
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ## E
@@ -267,10 +251,6 @@ def main():
     if answer:
         return results.index(answer) + 1
     return 0
-
-
-if __name__ == '__main__':
-    print(main())
 ```
 
 ## F
@@ -325,6 +305,9 @@ def main():
     r = len(numbers) - 1
     left = r - l
 
+    # Ищем симметричную подпоследовательность.
+    # l и r будут указывать на центр симметрии. Он состоит либо из 2 символов, либо из одного 
+    # tail_index будет равен длине хвоста, который нужно подставить в конец, чтобы из исходной последоваетльности сделать симметричную.
     while left > 0:
         current_prefix_length += 1
         if numbers[l] != numbers[r]:
@@ -342,10 +325,6 @@ def main():
         # reverse a list without creating a new one
         for i in range(tail_index - 1, -1, -1):
             print(numbers[i], end=' ')
-
-
-if __name__ == '__main__':
-    main()
 ```
 
 ## G
@@ -447,27 +426,68 @@ def O_n():
 | 1 2 3  | 3 2 1  |
 
 ```python
+def nth_element(array: list, begin: int, end: int, k: int):
+    if not end:
+        end = len(array) - 1
+    if not begin:
+        begin = 0
+
+    while begin < end:
+        # x can be random from [begin..end]
+        x = array[(end + begin) // 2]
+        first_equal_x = begin
+        first_greater_x = begin
+
+        for i in range(begin, end + 1):
+            cur_element = array[i]
+
+            if cur_element == x:
+                # swap current element and first greater than x
+                array[i] = array[first_greater_x]
+                array[first_greater_x] = cur_element
+                first_greater_x += 1
+            elif cur_element < x:
+                # move current element to the position before first equal x
+                array[i] = array[first_greater_x]
+                array[first_greater_x] = array[first_equal_x]
+                array[first_equal_x] = cur_element
+                first_greater_x += 1
+                first_equal_x += 1
+
+        if k < first_equal_x:
+            end = first_equal_x - 1
+        elif k >= first_greater_x:
+            begin = first_greater_x
+        else:
+            return
+
+
 def main():
-    numbers = list(map(int, input().split()))
+    array = list(map(int, input().split()))
+    if len(array) == 3:
+        return array
 
-    if len(numbers) == 3:
-        return numbers
+    # --- O(nlogn) ---
+    # array.sort()
 
-    numbers.sort()
+    # --- O(n) ---
+    # rearrange the whole array in order to place the max element at the end
+    nth_element(array=array, begin=0, end=len(array) - 1, k=len(array) - 1)
+    # then rearrange array[0..-1] and place the two biggest elements at the end of array[0..-1]
+    nth_element(array=array, begin=0, end=len(array) - 2, k=len(array) - 2)
+    # finally rearrange array[0..-3] and place the two min elements at the beginning
+    nth_element(array=array, begin=0, end=len(array) - 4, k=2)
 
-    one, two, three = numbers[0:3]
-    four, five, six = numbers[-3:]
+    one, two = array[0:2]
+    three, four = array[-3:-1]
 
-    six_sign = (six > 0) - (six < 0)
+    # equals -1 or 1
+    max_number_sign = (array[-1] > 0) - (array[-1] < 0)
 
-    if one * two * six_sign > four * five * six_sign:
-        return one, two, six
+    if one * two * max_number_sign > three * four * max_number_sign:
+        return one, two, array[-1]
     else:
-        return four, five, six
-
-
-if __name__ == '__main__':
-    print(*main())
+        return three, four, array[-1]
 ```
 
 ## I
@@ -606,11 +626,15 @@ def main():
         measure, estimation = input().split()
         measure = float(measure)
 
+        # python real numbers precision patch 
         if abs(measure - last) < 1e-6:
             continue
 
         match estimation:
-            # commented lines don't pass some tests (why?)
+            # commented lines don't pass some tests because input can go out of range [left..right]
+            # e.g. borders are [30..50], last measure was 60 and input says '45 closer'
+            # in this case last - (last - measure) / 2 = 60 - (60 - 45) / 2 = 52.5 which is beyond the right border
+            # thus min and max functions are used
             case 'closer':
                 if last > measure:
                     # borders[1] = last - ((last - measure) / 2)
@@ -618,7 +642,6 @@ def main():
                 else:
                     # borders[0] = last + ((measure - last) / 2)
                     borders[0] = max(borders[0], last + ((measure - last) / 2))
-                last = measure
             case 'further':
                 if last > measure:
                     # borders[0] = measure + ((last - measure) / 2)
@@ -626,6 +649,6 @@ def main():
                 else:
                     # borders[1] = measure - ((measure - last) / 2)
                     borders[1] = min(borders[1], measure - ((measure - last) / 2))
-                last = measure
+        last = measure
     print(*borders)
 ```

@@ -1,4 +1,4 @@
-link <https://contest.yandex.ru/contest/28736/enter/>
+Link: <https://contest.yandex.ru/contest/28736/enter/>
 
 ## A
 
