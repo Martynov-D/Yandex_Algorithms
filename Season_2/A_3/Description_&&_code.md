@@ -31,71 +31,249 @@ Link: <https://contest.yandex.ru/contest/28963/enter/>
 |:--------------------------------------|:--------------------|
 | 10<br>1 2 3 4 5<br>2 4 6 8 10<br>HELP | NO<br>YES<br>6 8 10 |
 
-<i>Example 1:</i>
+<i>Example 2:</i>
 
 | In                                                      | Out                                                      |
 |:--------------------------------------------------------|:---------------------------------------------------------|
 | 10<br>1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>HELP | NO<br>NO<br>NO<br>NO<br>NO<br>NO<br>NO<br>NO<br>NO<br>10 |
 
-<i>Example 1:</i>
+<i>Example 3:</i>
 
 | In                                                         | Out                        |
 |:-----------------------------------------------------------|:---------------------------|
 | 16<br>1 2 3 4 5 6 7 8<br>9 10 11 12<br>13 14<br>16<br>HELP | NO<br>NO<br>NO<br>NO<br>15 |
 
 ```python
+def main():
+    with open('input.txt', 'r') as inf, open('output.txt', 'a') as outf:
+        upper_bound = int(inf.readline())
+        all_numbers = set(range(1, upper_bound + 1))
+        possible_numbers = all_numbers.copy()
+        guess = inf.readline().strip()
 
+        while guess != 'HELP':
+            guess = set(map(int, guess.split()))
+            if len(possible_numbers.intersection(guess)) <= len(possible_numbers) // 2:
+                outf.write('NO\n')
+                possible_numbers.difference_update(guess)
+            else:
+                outf.write('YES\n')
+                possible_numbers.intersection_update(guess)
+            guess = inf.readline().strip()
+
+        possible_numbers = ' '.join(map(str, sorted(possible_numbers)))
+        outf.write(possible_numbers)
 ```
 
 ## B
 
+Дан неориентированный невзвешенный граф. В графе возможны петли и кратные рёбра. Постройте такой новый граф без петель и
+кратных рёбер, что для любых двух вершин в нём расстояние равно расстоянию в исходном графе. Если вершины не связны,
+расстояние между ними бесконечность.
+
 ### Формат ввода
+
+На первой строке число вершин n и число рёбер m (1 ≤ n, m ≤ 10<sup>5</sup>). Следующие m строк содержат пары чисел от 1
+до n – рёбра графа.
 
 ### Формат вывода
 
+Новый граф в таком же формате. Рёбра можно выводить в произвольном формате.
+
 <i>Example 1:</i>
 
-| In  | Out |
-|:----|:----|
-|     |     |
+| In                                     | Out                      |
+|:---------------------------------------|:-------------------------|
+| 3 5<br>1 1<br>1 3<br>2 1<br>1 2<br>2 3 | 3 3<br>1 2<br>1 3<br>2 3 |
 
 ```python
+def main():
+    number_of_nodes, number_of_edges = map(int, input().split())
 
+    edges = set()
+    for i in range(number_of_edges):
+        begin, end = map(int, input().split())
+        if (begin, end) not in edges and (end, begin) not in edges and begin != end:
+            edges.add((begin, end))
+
+    print(number_of_nodes, len(edges))
+    for edge in edges:
+        print(*edge)
 ```
 
 ## C
 
+Политическая жизнь одной страны очень оживленная. В стране действует K политических партий, каждая из которых регулярно
+объявляет национальную забастовку. Дни, когда хотя бы одна из партий объявляет забастовку, при условии, что это не
+суббота или воскресенье (когда и так никто не работает), наносят большой ущерб экономике страны. i-я партия объявляет
+забастовки строго каждый b<sub>i</sub> день, начиная со дня с номером a<sub>i</sub>. То есть i-я партия объявляет
+забастовки в дни a<sub>i</sub>, a<sub>i</sub>+b<sub>i</sub>, a<sub>i</sub>+2b<sub>i</sub> и т.д. Если в какой-то день
+несколько партий объявляет забастовку, то это считается одной общенациональной забастовкой. В календаре страны N дней,
+пронумерованных от 1 до N. Первый день года является понедельником, шестой и седьмой дни года — выходные, неделя состоит
+из семи дней.
+
 ### Формат ввода
+
+Программа получает на вход число дней в году N (1 ≤ N ≤10<sup>6</sup>) и число политических партий K (1 ≤ K ≤100). Далее
+идет K строк, описывающие графики проведения забастовок. i-я строка содержит числа a<sub>i</sub> и b<sub>i</sub> (1 ≤
+a<sub>i</sub>, b<sub>i</sub> ≤ N).
 
 ### Формат вывода
 
+Выведите единственное число: количество забастовок, произошедших в течение года.
+
 <i>Example 1:</i>
 
-| In  | Out |
-|:----|:----|
-|     |     |
+| In                        | Out |
+|:--------------------------|:----|
+| 19 3<br>2 3<br>3 5<br>9 8 | 8   |
+
+<i>Example 2:</i>
+
+| In                | Out |
+|:------------------|:----|
+| 5 2<br>1 2<br>2 2 | 5   |
+
+<i>Example 3:</i>
+
+| In            | Out |
+|:--------------|:----|
+| 1000 1<br>1 1 | 715 |
 
 ```python
+def main():
+    days, number_of_parties = map(int, input().split())
 
+    weekends = set()
+    for temp in range(6, days + 1, 7):
+        # суббота
+        weekends.add(temp)
+        # воскресенье
+        weekends.add(temp + 1)
+    # Заплатка, чтобы не добавлять проверку на попадание в границы интервала [1..days] внутри цикла для temp + 1
+    weekends.discard(days + 2)
+
+    holidays = set()
+    for i in range(number_of_parties):
+        start, b = map(int, input().split())
+        for temp in range(start, days + 1, b):
+            if temp not in weekends:
+                holidays.add(temp)
+
+    print(len(holidays))
 ```
 
 ## D
 
+Петя играет с друзьями в игру, которую иногда называют "Жребий Крижановского". Правила игры следующие: в каждом туре
+каждый игрок загадывает произвольное натуральное число. После этого игрок, загадавший минимальное число, которое не
+повторяется, выигрывает в этом туре, причем его выигрыш равен этому числу. Например, если играют 6 человек и были
+загаданы числа 3, 2, 1, 1, 4 и 2, то выиграл первый игрок, причем его выигрыш равен 3. Если все загаданные числа
+повторяются, то тур считается ничейным и никто баллов не получает.
+
+Общий выигрыш игрока за игру равен сумме баллов за все сыгранные туры.
+
+Петя с друзьями при игре просто называют по очереди загаданные ими числа, а потом определяют, кто выиграл, и
+подсчитывают баллы. Однако при таком формате игры в принципе можно сжульничать, не загадывая число заранее, а, уже зная
+числа, названные предыдущими игроками, выбрать себе оптимальное "загаданное" число. Этим и пользуется Петя. Он называет
+число последним и старается выбрать число так, чтобы максимизировать свой выигрыш.
+
+Идет последний тур игры. Известны очки всех игроков перед этим туром и названные игроками числа. Выясните, какое число
+следует назвать Пете, чтобы по результатам игры у как можно большего числа игроков количество баллов было меньше, чем у
+него. Если таких чисел несколько, то Петя хочет назвать минимальное возможное.
+
 ### Формат ввода
+
+В первой строке вводится число n - количество игроков (2 <= n <= 100). Вторая строка содержит n чисел - баллы игроков
+перед последним туром (неотрицательные целые числа, не большие 100). Баллы перечислены в том порядке, в котором игроки
+обычно называют числа (то есть Петины баллы указаны последними). В третьей строке задано (n-1) число - числа, названные
+игроками в последнем туре (числа не превышают 100), в том порядке, в котором они их называли.
 
 ### Формат вывода
 
+Выведите число, которое следует назвать Пете.
+
 <i>Example 1:</i>
 
-| In  | Out |
-|:----|:----|
-|     |     |
+| In                            | Out |
+|:------------------------------|:----|
+| 6<br>0 0 0 0 0 0<br>2 3 4 5 6 | 1   |
+
+<i>Example 2:</i>
+
+| In                             | Out |
+|:-------------------------------|:----|
+| 6<br>8 3 12 5 0 9<br>2 1 3 1 4 | 2   |
+
+<i>Example 3:</i>
+
+| In                                    | Out |
+|:--------------------------------------|:----|
+| 8<br>0 0 0 0 0 0 0 0<br>1 1 2 2 3 3 4 | 1   |
 
 ```python
+def check_position(answer: int, prev_round: list, cur_round: list, number_of_players: int):
+    # копируем, чтобы не менять оригинал
+    updated_positions = cur_round.copy()
+    updated_positions.append(answer)
 
+    # считаем количество вхождений, чтобы найти минимальный уникальный ответ
+    answers = dict()
+    for i in updated_positions:
+        if i not in answers:
+            answers[i] = 0
+        answers[i] += 1
+
+    min_unique = None
+    found = False
+    for key, value in answers.items():
+        if value == 1 and key != 0:
+            if not found:
+                min_unique = key
+                found = True
+            else:
+                min_unique = min(min_unique, key)
+
+    if found:
+        index = updated_positions.index(min_unique)
+        # для экономии места копируем ответы в список, который дальше не будет использоваться
+        updated_positions = prev_round.copy()
+        updated_positions[index] += min_unique
+    else:
+        # из-за порядка строк в if приходится продублировать копирование
+        updated_positions = prev_round.copy()
+
+    # находим и возвращаем позицию Пети
+    position = 0
+    for i in range(len(updated_positions) - 1):
+        if updated_positions[i] < updated_positions[-1]:
+            position += 1
+
+    if sum(updated_positions) == 0:
+        return number_of_players
+    return number_of_players - position
+
+
+def main():
+    number_of_players = int(input())
+    prev_round = list(map(int, input().split()))
+    cur_round = list(map(int, input().split()))
+
+    best_answer = 1
+    best_position = number_of_players
+    i = 1
+    # пока не дойдет до 102, как до самого большого из названных ответов, либо Петя не займет первое место
+    while i < 102 and best_position != 1:
+        position = check_position(i, prev_round, cur_round, number_of_players)
+        if position < best_position:
+            best_answer = i
+            best_position = position
+        i += 1
+
+    print(best_answer)
 ```
 
-## E #TIMELIMIT
+## E
 
 Вам дается последовательность чисел. Для каждого числа определите, является ли оно числом Фибоначчи. Напомним, что числа
 Фибоначчи определяются так:
@@ -125,6 +303,7 @@ def slow():
     last, penultimate = 1, 1
 
     number_of_questions = int(input())
+    answer = list()
     for _ in range(number_of_questions):
         number = int(input())
 
@@ -134,11 +313,48 @@ def slow():
                 penultimate = last - penultimate
                 fibonacci_numbers.add(last)
         if number not in fibonacci_numbers:
-            print('No')
+            answer.append('No')
         else:
-            print('Yes')
+            answer.append('Yes')
+    print('\n'.join(answer))
 
 
-if __name__ == '__main__':
-    slow()
+def quick():
+    modules = [10 ** 9 + 7, 10 ** 9 + 11, 10 ** 9 + 13]
+    # Числа Фибоначчи растут со скоростью ~ 1.132^n. В задаче будут даны числа вплоть до 5000 знаков, то есть 10^5000.
+    # 10^5000 = 2^(~3.33 * 5000). Учитывая, что 2^n / 1.132^n ~= 1.766, надо взять с запасом. 3.33 * 5000 = 16650. 16650 * 1.77 ~= 29500
+    # Но даже посчитав 40000 чисел Фибоначчи, ответ не сходится на некоторых тестах. На 42к чисел уже сходится.
+    max_fibonacci_number_index = 42000
+
+    used_hashes = list()
+    for _ in range(len(modules)):
+        used_hashes.append(set())
+
+    for i in range(len(modules)):
+        f1 = 1
+        f2 = 1
+        used_hashes[i].add(1)
+        for j in range(max_fibonacci_number_index):
+            # Кольца вычетов по модулю
+            f1, f2 = f2, (f1 + f2) % modules[i]
+            used_hashes[i].add(f2)
+
+    answer = list()
+    n = int(input())
+    for i in range(n):
+        number = int(input())
+        is_fibonacci = True
+        for j in range(len(modules)):
+            is_fibonacci = is_fibonacci and number % modules[j] in used_hashes[j]
+        if is_fibonacci:
+            answer.append('Yes')
+        else:
+            answer.append('No')
+
+    print('\n'.join(answer))
 ```
+
+| Language      | Type                                                      | Time   | Mem     |
+|---------------|-----------------------------------------------------------|--------|---------|
+| Python 3.10.1 | Quick<br>(hashes)                                         | 0.832s | 17.61Mb |
+| Python 3.10.1 | Slow<br>(Count all fibonacci numbers up to biggest input) | 0.538s | 30.51Mb |

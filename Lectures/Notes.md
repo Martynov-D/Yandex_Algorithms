@@ -59,4 +59,36 @@ def rle(string):
     return ''.join(encoded)
 ```
 
-## Лекция 3: 
+## Лекция 3:
+
+Множество
+
+```python
+hashTableSize = 10
+m_set = [[] for _ in range(hashTableSize)]
+
+
+def count_hash(x):
+    return x % hashTableSize
+
+
+def add(x):
+    if not find(x):
+        m_set[count_hash(x)].append(x)
+
+
+def find(x):
+    for number in m_set[count_hash(x)]:
+        if number == x:
+            return True
+    return False
+
+
+def delete(x):
+    x_list = m_set[count_hash(x)]
+    for i in range(len(x_list)):
+        if x_list[i] == x:
+            x_list[i] = x_list[len(x_list) - 1]
+            x_list.pop()
+            return
+```
