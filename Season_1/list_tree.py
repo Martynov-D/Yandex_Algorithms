@@ -1,9 +1,12 @@
+import sys
+
+
 def allocate_memory(max_nodes: int) -> list:
     """
     Allocates memory for binary tree of fixed capacity.
 
     :param max_nodes: capacity of the tree
-    :return: [[allocated memory], index of the first empty element, is balanced or not ]
+    :return: [[allocated memory], index of the first empty element, is balanced or not]
     """
 
     memory = list()
@@ -81,7 +84,7 @@ def find_max(root: list, tree: list) -> int:
             pointer = tree[0][pointer[2]]
 
 
-def find_second_max(root: list, tree: list):
+def find_second_max(root: list, tree: list) -> int:
     if root[2] is None:
         return tree[0][find_max(tree[0][root[1]], tree)][0]
     else:
@@ -128,7 +131,7 @@ def inorder_branch_traversal(root: list, tree: list):
         inorder_branch_traversal(tree[0][root[2]], tree)
 
 
-def count_height(root: list, tree: list):
+def count_height(root: list, tree: list) -> int:
     h1 = 0
     h2 = 0
     if root[1]:
@@ -151,7 +154,8 @@ def main():
 
     for key in numbers[1:-1]:
         fill_node(root, key, tree)
-
+    inorder_branch_traversal(root, tree)
 
 if __name__ == '__main__':
+    sys.setrecursionlimit(100000)
     main()

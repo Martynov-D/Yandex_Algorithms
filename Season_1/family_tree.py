@@ -1,29 +1,45 @@
 import sys
 
 
-def create_bin_tree(max_nodes: int) -> list:
+def allocate_memory(max_nodes: int) -> list:
+    """
+    Allocates memory for binary tree of fixed capacity.
+
+    :param max_nodes: capacity of the tree
+    :return: [[allocated memory], index of the first empty element, is balanced or not]
+    """
+
     memory = list()
     for i in range(max_nodes):
-        memory.append([None, None, None, None, i])
-    return [memory, 0]
+        # key, left, right, parent, index, height of subtree
+        memory.append([None, None, None, None, i, 1])
+    return [memory, 0, True]
 
 
-def fill_node(root: list, name: str, tree: list):
+def fill_node(root: list, key: int, tree: list):
+    """
+    Fills in node of the given tree with the given key
+
+    :param root: root of the given tree
+    :param key: value to add to the tree
+    :param tree: tree to add key to
+    """
+
     pointer = root
     prev_node = [0, 'o']
 
     while pointer is not None:
         prev_node[0] = pointer[4]
-        if name < pointer[0]:
+        if key < pointer[0]:
             prev_node[1] = 'l'
-            pointer = tree[0][pointer[1]] if pointer[1] else None
-        elif name > pointer[0]:
+            pointer = tree[0][pointer[1]] if pointer[1] is not None else None
+        elif key > pointer[0]:
             prev_node[1] = 'r'
-            pointer = tree[0][pointer[2]] if pointer[2] else None
+            pointer = tree[0][pointer[2]] if pointer[2] is not None else None
         else:
             return
 
-    tree[0][tree[1]][0] = name
+    tree[0][tree[1]][0] = key
     tree[0][tree[1]][3] = prev_node[0]
 
     match prev_node[1]:
@@ -67,7 +83,7 @@ def main():
     number_of_people = int(input())
 
     family_tree = dict()
-    tree = create_bin_tree(number_of_people)
+    tree = allocate_memory(number_of_people)
 
     person, parent = input().split()
     root = tree[0][0]
@@ -79,7 +95,7 @@ def main():
     family_tree[parent]['children'].add(person)
     family_tree[person] = {'children': set(), 'parent': parent, 'offspring': 0}
 
-    for i in range(2, number_of_people):
+    for _ in range(2, number_of_people):
         person, parent = input().split()
         fill_node(root, parent, tree)
         fill_node(root, person, tree)
